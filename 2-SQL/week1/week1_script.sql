@@ -1,0 +1,1 @@
+cat week1_script.sql | docker exec -i pg_container psql -d week1

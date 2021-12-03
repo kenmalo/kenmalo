@@ -1,0 +1,413 @@
+import random
+wheel = [5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100]
+
+
+
+player1wins = 0
+player2wins = 0
+player3wins = 0
+tie = 0
+counter = 1
+trigger = 0
+TestingNumber = 70 #SPIN ON 75
+for i in range(0,100000):
+	#for i in range(1,19):
+
+		#player1score = wheel[i] #start on value of 10, lowest possible
+		
+		spin1 = random.choice(wheel)
+
+		#For experimenting:
+		#spin1 = TestingNumber
+		
+		threshhold = 0
+		if spin1 < threshhold: #Player 1 decision
+			spin2 = random.choice(wheel)
+			player1score = spin1 + spin2
+		else: 
+			player1score = spin1
+		
+		if player1score > 100:#if player 1 went over they lose
+			player1score = 0
+			player1lose = 1
+
+		#FOR EXPERIMENTING
+		#player1score = 65
+####################################################################################################
+		#2nd player's spin
+		spin1 = random.choice(wheel)
+
+		if spin1 < player1score or spin1 < 50: #they spin again if they tie on 50
+			spin2 = random.choice(wheel)
+			player2score = spin1 + spin2
+		else: 
+			player2score = spin1
+
+		if player2score > 100: # if 2 goes over
+			player2lose = 1
+		elif player2score < player1score: # if player 2 is less than 1's
+			player2lose = 1
+		elif player2score == player1score:# if they tie
+			tie = 1
+		else:
+			player1lose = 1 # 2 won, so 1 lost
+			player2lose = 0
+
+		
+######################################################################################################
+		#3rd player's turn
+		if tie == 1: #if it was a tie between 1 and 2
+			spin3 = random.choice(wheel)
+			if spin3 < player2score:
+				spin4 = random.choice(wheel)
+				player3score = spin3 + spin4
+			else:
+				player3score = spin3
+
+			if player3score <= 100 and player3score > player2score:#player 3 wins
+				player3lose = 0
+				player2lose = 1
+				player1lose = 1
+
+			elif player3score < player2score: # if 3 loses, spinoff between 1 and 2
+				while player2score == player1score and trigger == 0:
+					spinTie1 = random.choice(wheel)
+					spinTie2 = random.choice(wheel)
+					if spinTie2 != spinTie1:
+						
+						if spinTie1 > spinTie2:
+							player2lose = 1
+							player1lose = 0
+							player3lose = 1
+							trigger = 1
+						elif spinTie2 > spinTie1:
+							player2lose = 0
+							player1lose = 1
+							player3lose = 1
+							trigger = 1
+						
+
+			elif player3score == player2score:
+				#spinoff 1 and 2 and 3
+				while player3score == player2score and trigger == 0:
+					spinTie3 = random.choice(wheel)
+					spinTie2 = random.choice(wheel)
+					spinTie1 = random.choice(wheel)
+					if max(spinTie3,spinTie2,spinTie3) != min(spinTie3,spinTie2,spinTie3):
+						winner = max(spinTie3,spinTie2,spinTie3)
+						if winner == spinTie1:
+							player1lose = 0
+							player2lose = 1
+							player3lose = 1
+						elif winner == spinTie2:
+							player1lose = 1
+							player2lose = 0
+							player3lose = 1
+						elif winner == spinTie3:
+							player1lose = 1
+							player2lose = 1
+							player3lose = 0
+						trigger = 1
+
+
+				
+				
+
+
+
+		elif player2lose == 0: #player2 is top score
+			spin3 = random.choice(wheel)
+			if spin3 < player2score:
+				spin4 = random.choice(wheel)
+				player3score = spin3 + spin4
+			else:
+				player3score = spin3
+
+			if player3score == player2score: #if 3 ties 2
+				while player3score == player2score and trigger == 0:
+					spinTie2 = random.choice(wheel)
+					spinTie3 = random.choice(wheel)
+					if spinTie3 != spinTie2:
+						if spinTie2 > spinTie3:
+							player3lose = 1
+							player2lose = 0
+							player1lose = 1
+							trigger = 1
+						elif spinTie3 > spinTie2:
+							player3lose = 0
+							player2lose = 1
+							player1lose = 1
+							trigger = 1
+
+			elif player3score <= 100 and player3score > player2score:#player 3 wins
+				player3lose = 0
+				player2lose = 1
+			else: 
+				player3lose = 1
+
+		elif player2lose == 1: #player1 is top score
+			spin3 = random.choice(wheel)
+			if spin3 < player1score:
+				spin4 = random.choice(wheel)
+				player3score = spin3 + spin4
+			else:
+				player3score = spin3
+			
+			if player3score == player1score: #if 3 ties 1
+				while player3score == player1score and trigger == 0:
+					spinTie1 = random.choice(wheel)
+					spinTie3 = random.choice(wheel)
+					if spinTie3 != spinTie1:
+						if spinTie1 > spinTie3:
+							player3lose = 1
+							player1lose = 0
+							trigger = 1
+						elif spinTie3 > spinTie1:
+							player3lose = 0
+							player1lose = 1
+							trigger = 1
+
+			if player3score > 100 or player3score < player1score:
+				player3lose = 1
+				player1lose = 0
+			else:
+				player3lose = 0
+				player2lose = 1
+				player1lose = 1
+
+		if player3lose == 0:
+			player3wins += 1
+		elif player2lose == 0:
+			player2wins += 1
+		elif player1lose == 0:
+			player1wins += 1
+			
+		
+
+
+		counter += 1
+		
+
+
+		#reset everything
+		player3lose = 0
+		player2lose = 0
+		player1lose = 0
+		tie = 0
+		trigger = 0
+
+if player1wins > 0:
+	player1wins = float(player1wins)
+	winspercentage = player1wins / float(counter)
+	counter += 1
+	#print winspercentage
+
+print "Wins percentage WITH spin: " + str(winspercentage)
+print player1wins
+print player2wins
+print player3wins
+
+player1wins = 0
+player2wins = 0
+player3wins = 0
+tie = 0
+counter = 1
+trigger = 0
+
+for i in range(0,100000):
+	#for i in range(1,19):
+
+		#player1score = wheel[i] #start on value of 10, lowest possible
+		
+		spin1 = random.choice(wheel)
+
+		#For experimenting:
+		#spin1 = TestingNumber
+		
+		threshhold = 0
+		if spin1 < threshhold: #Player 1 decision
+			spin2 = random.choice(wheel)
+			player1score = spin1 + spin2
+		else: 
+			player1score = spin1
+		
+		if player1score > 100:#if player 1 went over they lose
+			player1score = 0
+			player1lose = 1
+
+		#FOR EXPERIMENTING
+		#player1score = TestingNumber
+####################################################################################################
+		#2nd player's spin
+		spin1 = random.choice(wheel)
+
+		if spin1 < player1score or spin1 < 50: #they spin again if they tie on 50
+			spin2 = random.choice(wheel)
+			player2score = spin1 + spin2
+		else: 
+			player2score = spin1
+
+		if player2score > 100: # if 2 goes over
+			player2lose = 1
+		elif player2score < player1score: # if player 2 is less than 1's
+			player2lose = 1
+		elif player2score == player1score:# if they tie
+			tie = 1
+		else:
+			player1lose = 1 # 2 won, so 1 lost
+			player2lose = 0
+
+		
+######################################################################################################
+		#3rd player's turn
+		if tie == 1: #if it was a tie between 1 and 2
+			spin3 = random.choice(wheel)
+			if spin3 < player2score:
+				spin4 = random.choice(wheel)
+				player3score = spin3 + spin4
+			else:
+				player3score = spin3
+
+			if player3score <= 100 and player3score > player2score:#player 3 wins
+				player3lose = 0
+				player2lose = 1
+				player1lose = 1
+
+			elif player3score < player2score: # if 3 loses, spinoff between 1 and 2
+				while player2score == player1score and trigger == 0:
+					spinTie1 = random.choice(wheel)
+					spinTie2 = random.choice(wheel)
+					if spinTie2 != spinTie1:
+						
+						if spinTie1 > spinTie2:
+							player2lose = 1
+							player1lose = 0
+							player3lose = 1
+							trigger = 1
+						elif spinTie2 > spinTie1:
+							player2lose = 0
+							player1lose = 1
+							player3lose = 1
+							trigger = 1
+						
+
+			elif player3score == player2score:
+				#spinoff 1 and 2 and 3
+				while player3score == player2score and trigger == 0:
+					spinTie3 = random.choice(wheel)
+					spinTie2 = random.choice(wheel)
+					spinTie1 = random.choice(wheel)
+					if max(spinTie3,spinTie2,spinTie3) != min(spinTie3,spinTie2,spinTie3):
+						winner = max(spinTie3,spinTie2,spinTie3)
+						if winner == spinTie1:
+							player1lose = 0
+							player2lose = 1
+							player3lose = 1
+						elif winner == spinTie2:
+							player1lose = 1
+							player2lose = 0
+							player3lose = 1
+						elif winner == spinTie3:
+							player1lose = 1
+							player2lose = 1
+							player3lose = 0
+						trigger = 1
+
+
+				
+				
+
+
+
+		elif player2lose == 0: #player2 is top score
+			spin3 = random.choice(wheel)
+			if spin3 < player2score:
+				spin4 = random.choice(wheel)
+				player3score = spin3 + spin4
+			else:
+				player3score = spin3
+
+			if player3score == player2score: #if 3 ties 2
+				while player3score == player2score and trigger == 0:
+					spinTie2 = random.choice(wheel)
+					spinTie3 = random.choice(wheel)
+					if spinTie3 != spinTie2:
+						if spinTie2 > spinTie3:
+							player3lose = 1
+							player2lose = 0
+							player1lose = 1
+							trigger = 1
+						elif spinTie3 > spinTie2:
+							player3lose = 0
+							player2lose = 1
+							player1lose = 1
+							trigger = 1
+
+			elif player3score <= 100 and player3score > player2score:#player 3 wins
+				player3lose = 0
+				player2lose = 1
+			else: 
+				player3lose = 1
+
+		elif player2lose == 1: #player1 is top score
+			spin3 = random.choice(wheel)
+			if spin3 < player1score:
+				spin4 = random.choice(wheel)
+				player3score = spin3 + spin4
+			else:
+				player3score = spin3
+			
+			if player3score == player1score: #if 3 ties 1
+				while player3score == player1score and trigger == 0:
+					spinTie1 = random.choice(wheel)
+					spinTie3 = random.choice(wheel)
+					if spinTie3 != spinTie1:
+						if spinTie1 > spinTie3:
+							player3lose = 1
+							player1lose = 0
+							trigger = 1
+						elif spinTie3 > spinTie1:
+							player3lose = 0
+							player1lose = 1
+							trigger = 1
+
+			if player3score > 100 or player3score < player1score:
+				player3lose = 1
+				player1lose = 0
+			else:
+				player3lose = 0
+				player2lose = 1
+				player1lose = 1
+
+		if player3lose == 0:
+			player3wins += 1
+		elif player2lose == 0:
+			player2wins += 1
+		elif player1lose == 0:
+			player1wins += 1
+			
+		
+
+
+		counter += 1
+		
+
+
+		#reset everything
+		player3lose = 0
+		player2lose = 0
+		player1lose = 0
+		tie = 0
+		trigger = 0
+
+if player1wins > 0:
+	player1wins = float(player1wins)
+	winspercentage = player1wins / float(counter)
+	counter += 1
+	#print winspercentage
+
+print "Wins percentage with NO spin: " + str(winspercentage)
+print player1wins
+print player2wins
+print player3wins
+

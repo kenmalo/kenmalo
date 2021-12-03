@@ -1,0 +1,14 @@
+def fizzbuzz(num):
+    x = 1
+    for x in range(num+1):
+        if x % 3 == 0:
+         print("Fizz")
+        if x % 3 == 0 and x % 5 == 0:
+         print("Buzz")
+        elif x % 3 == 0 and x % 5 == 0:
+         print("Fizbuzz")
+        else:
+         print(x)
+
+
+fizzbuzz(50)
